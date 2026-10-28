@@ -1,0 +1,93 @@
+﻿@model WebApplication1.Models.ViewModels.AnalyticsViewModel
+
+@{
+    ViewData["Title"] = "Klik Tarixçəsi və Analitika";
+}
+
+<div class="container" style="padding: 40px 0;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2><i class="fa-solid fa-chart-line" style="color:var(--neon-cyan);"></i> iGaming Analitika Paneli</h2>
+        <a asp-action="Index" style="color: #9ca3af; font-size: 13px; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Dashboard-a qayıt</a>
+    </div>
+
+    <!-- 📊 Statistika Kartları -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        
+        <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; padding: 18px;">
+            <div style="color: #9ca3af; font-size: 12px;">Ümumi Kliklər</div>
+            <div style="font-size: 22px; font-weight: 900; color: #fff; margin-top: 5px;">@Model.TotalClicks</div>
+        </div>
+
+        <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; padding: 18px;">
+            <div style="color: #9ca3af; font-size: 12px;">Unikal Kliklər</div>
+            <div style="font-size: 22px; font-weight: 900; color: var(--neon-cyan); margin-top: 5px;">@Model.UniqueClicks</div>
+        </div>
+
+        <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; padding: 18px;">
+            <div style="color: #9ca3af; font-size: 12px;">Qeydiyyatlar (Reg)</div>
+            <div style="font-size: 22px; font-weight: 900; color: var(--gold); margin-top: 5px;">@Model.TotalRegistrations</div>
+        </div>
+
+        <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; padding: 18px;">
+            <div style="color: #9ca3af; font-size: 12px;">İlkin Depozitlər (FTD)</div>
+            <div style="font-size: 22px; font-weight: 900; color: var(--neon-green); margin-top: 5px;">@Model.TotalDeposits</div>
+        </div>
+
+        <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; padding: 18px;">
+            <div style="color: #9ca3af; font-size: 12px;">CR% (FTD)</div>
+            <div style="font-size: 22px; font-weight: 900; color: #38bdf8; margin-top: 5px;">@Model.ConversionRate%</div>
+        </div>
+
+        <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; padding: 18px;">
+            <div style="color: #9ca3af; font-size: 12px;">Ümumi Qazanc</div>
+            <div style="font-size: 22px; font-weight: 900; color: #34d399; margin-top: 5px;">@Model.TotalPayout AZN</div>
+        </div>
+
+    </div>
+
+    <!-- 📋 Cədvəl -->
+    <div style="background: rgba(17, 21, 34, 0.9); border: 1px solid #1e2638; border-radius: 12px; overflow-x: auto; padding: 15px;">
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: #fff;"><i class="fa-solid fa-list"></i> Son Kliklər və Statuslar</h3>
+        <table style="width: 100%; border-collapse: collapse; text-align: left; color: #fff; font-size: 13px;">
+            <thead>
+                <tr style="border-bottom: 1px solid #1e2638; color: #9ca3af;">
+                    <th style="padding: 12px;">ID</th>
+                    <th style="padding: 12px;">Kazino</th>
+                    <th style="padding: 12px;">Tarix / Vaxt</th>
+                    <th style="padding: 12px;">IP Ünvanı</th>
+                    <th style="padding: 12px;">Status</th>
+                    <th style="padding: 12px;">Qazanc</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.Logs)
+                {
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px; color: #9ca3af;">#@log.Id</td>
+                        <td style="padding: 12px; font-weight: bold; color: var(--gold);">
+                            @(log.Casino != null ? log.Casino.Name : "Silinmiş Kazino")
+                        </td>
+                        <td style="padding: 12px;">@log.ClickTime.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                        <td style="padding: 12px; font-family: monospace; color: var(--neon-cyan);">@(string.IsNullOrEmpty(log.IpAddress) ? "Anonim" : log.IpAddress)</td>
+                        <td style="padding: 12px;">
+                            @if (log.IsDeposited)
+                            {
+                                <span style="background: rgba(52, 211, 153, 0.15); color: #34d399; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">FTD (Depozit)</span>
+                            }
+                            else if (log.IsRegistered)
+                            {
+                                <span style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">Reg (Qeydiyyat)</span>
+                            }
+                            else
+                            {
+                                <span style="color: #9ca3af; font-size: 11px;">Sadə Klik</span>
+                            }
+                        </td>
+                        <td style="padding: 12px; color: #34d399; font-weight: bold;">@log.Payout AZN</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

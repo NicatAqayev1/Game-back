@@ -1,0 +1,271 @@
+﻿@model IEnumerable<WebApplication1.Models.Casino>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge-hero">
+                <i class="fa-solid fa-shield-halved"></i> 2026-cı İlin Rəsmi Veb-Sayt və Bonus Siyahısı
+            </div>
+
+            <h1>
+                Ən Yaxşı Kazino və Mərc Platformaları <br>
+                <span class="gradient-text">Eksklüziv Bonuslar və Hədiyyələr!</span>
+            </h1>
+
+            <p>
+                Etibarlı kazinoları müqayisə edin, xüsusi promo kodlarımızla qeydiyyatdan keçin və 1000 AZN-dək xoş gəldin bonusları ilə 500-dən çox Pulsuz Fırlanma qazanın!
+            </p>
+
+            <!-- AXTARIŞ VƏ FİLTR SİSTEMİ -->
+            <div class="search-container glass-panel">
+                <div class="search-box">
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-input" onkeyup="filterOffers()" placeholder="Kazino və ya oyun adı axtarın..." class="search-input">
+                    </div>
+                    <div class="filter-buttons">
+                        <button onclick="setCategory(this, 'all')" class="cat-btn active">Bütün</button>
+                        <button onclick="setCategory(this, 'slots')" class="cat-btn">Slotlar</button>
+                        <button onclick="setCategory(this, 'live')" class="cat-btn">Live Kazino</button>
+                        <button onclick="setCategory(this, 'instant')" class="cat-btn">Aviator</button>
+                        <button onclick="setCategory(this, 'sports')" class="cat-btn">İdman</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATİSTİKA VƏ ÖZƏLLİKLƏR -->
+            <div class="stats-grid">
+                <div class="stat-card glass-panel">
+                    <i class="fa-solid fa-bolt" style="color:var(--gold);"></i>
+                    <div>
+                        <div style="font-weight:700; font-size:13px;">Tez Çıxarış</div>
+                        <div style="font-size:11px; color:var(--text-muted);">Instant Payouts</div>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel">
+                    <i class="fa-solid fa-gift" style="color:var(--neon-green);"></i>
+                    <div>
+                        <div style="font-weight:700; font-size:13px;">Top Bonuslar</div>
+                        <div style="font-size:11px; color:var(--text-muted);">+500 Free Spin</div>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel">
+                    <i class="fa-solid fa-lock" style="color:var(--neon-cyan);"></i>
+                    <div>
+                        <div style="font-weight:700; font-size:13px;">100% Təhlükəsiz</div>
+                        <div style="font-size:11px; color:var(--text-muted);">Lisenziyalı Kazinolar</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED OFFER BANNER -->
+    <section id="top-offers" class="top-offers">
+        <div class="container">
+            <div class="banner-card glow-gold">
+                <div>
+                    <span class="banner-tag"><i class="fa-solid fa-star"></i> Ayın Ən Yaxşı Kazino Təklifi</span>
+                    <h2 class="banner-title">
+                        Xüsusi Qeydiyyat Paketi: <span style="color:var(--gold)">100% Depozit + 250 Free Spin!</span>
+                    </h2>
+                    <p style="color:var(--text-muted); font-size:13px;">
+                        BonusLab eksklüziv keçidi ilə daxil olun, hesabınızı artırın və birbaşa VIP oyun statusu qazanın.
+                    </p>
+                    <div class="promo-box">
+                        <span style="font-size:11px; color:var(--text-muted);">Promo Kod:</span>
+                        <span class="promo-code">MAXBONUS</span>
+                        <button onclick="copyPromo('MAXBONUS')" class="btn-copy"><i class="fa-regular fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+                <div>
+                    <a href="https://example.com/affiliate-link-top" target="_blank" rel="noopener" class="btn-cta-large glow-green">
+                        BONUSU HƏMİN AN AL <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BRANDS GRID SECTION -->
+    <section id="brands" style="padding: 40px 0;">
+        <div class="container">
+            <h2 class="section-title"><i class="fa-solid fa-crown" style="color:var(--gold);"></i> Məşhur Kazino & Mərc Platformaları</h2>
+            <p class="section-desc">Yoxlanılmış, yüksək əmsallı və dərhal ödəniş edən rəsmi saytlar</p>
+
+            <div class="offers-grid" id="offers-grid">
+                @foreach (var casino in Model)
+            {
+                         <div class="offer-card glass-panel" data-category="slots live instant">
+                    <div>
+                        <div class="card-header">
+                            <a asp-controller="Home" asp-action="Details" asp-route-slug="@casino.Slug" class="brand-info">
+                                <div class="brand-logo" style="color:@casino.LogoColor;">@casino.LogoText</div>
+                                <div>
+                                    <h3 style="font-size:15px; font-weight:700;">@casino.Name</h3>
+                                    <div class="stars">
+                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                                        <span style="color:var(--text-muted); margin-left:4px;">@casino.Rating</span>
+                                    </div>
+                                </div>
+                            </a>
+                            @if (casino.IsFeatured)
+                            {
+                                <span class="tag" style="background:rgba(255,215,0,0.1); color:var(--gold); border:1px solid rgba(255,215,0,0.3);">#1 Seçim</span>
+                            }
+                        </div>
+                        <div class="bonus-box">
+                            <div class="bonus-label">@casino.BonusTitle</div>
+                            <div class="bonus-value">@casino.BonusValue</div>
+                        </div>
+                        <div class="tags-list">
+                            <span class="tag"><i class="fa-solid fa-check" style="color:var(--neon-green)"></i> Instant Çıxarış</span>
+                            <span class="tag"><i class="fa-solid fa-check" style="color:var(--neon-green)"></i> m10 / E-Manat</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="promo-bar">
+                            <span style="color:var(--text-muted)">Promokod:</span>
+                            <span class="promo-code">@casino.PromoCode</span>
+                            <button onclick="copyPromo('AZBONUS1')" class="btn-copy">Kopyala</button>
+                        </div>
+                        <a href="/go/@casino.Slug" target="_blank" rel="noopener" class="btn-card-cta">BONUSU AL <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            }
+                <!-- CARD 1 -->
+       
+
+                <!-- CARD 2 -->
+                @* <div class="offer-card glass-panel" data-category="sports instant">
+                    <div>
+                        <div class="card-header">
+                            <div class="brand-info">
+                                <div class="brand-logo" style="color:var(--neon-green);">MS</div>
+                                <div>
+                                    <h3 style="font-size:15px; font-weight:700;">Mostbet AZ</h3>
+                                    <div class="stars">
+                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                        <span style="color:var(--text-muted); margin-left:4px;">4.8</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="tag" style="background:rgba(0,255,102,0.1); color:var(--neon-green);">Populyar</span>
+                        </div>
+                        <div class="bonus-box">
+                            <div class="bonus-label">İlk Depozit Bonusu</div>
+                            <div class="bonus-value">550 AZN + 250 FS</div>
+                        </div>
+                        <div class="tags-list">
+                            <span class="tag"><i class="fa-solid fa-check" style="color:var(--neon-green)"></i> Yüksək Əmsallar</span>
+                            <span class="tag"><i class="fa-solid fa-check" style="color:var(--neon-green)"></i> Aviator Hədiyyə</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="promo-bar">
+                            <span style="color:var(--text-muted)">Promokod:</span>
+                            <span class="promo-code">MOSTVIP</span>
+                            <button onclick="copyPromo('MOSTVIP')" class="btn-copy">Kopyala</button>
+                        </div>
+                        <a href="https://example.com/affiliate-mostbet" target="_blank" rel="noopener" class="btn-card-cta" style="background:linear-gradient(135deg, var(--neon-green), #00cc52);">BONUSU AL <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div> *@
+
+            </div>
+        </div>
+    </section>
+
+    <!-- GAMES SHOWCASE -->
+    <section id="games" class="games-section">
+        <div class="container">
+            <h2 class="section-title">Top Trend Oyunlar</h2>
+            <p class="section-desc">Azərbaycanda ən çox qazandıran və sürətli ödəniş edən məşhur slot və crash oyunları</p>
+
+            <div class="games-grid">
+                <div class="game-card glass-panel">
+                    <div class="game-thumb"><i class="fa-solid fa-plane-departure"></i></div>
+                    <div class="game-title">Aviator</div>
+                    <div class="game-provider">Spribe</div>
+                    <a href="https://example.com/affiliate-1xbet" target="_blank" class="btn-play">Oyna</a>
+                </div>
+                <div class="game-card glass-panel">
+                    <div class="game-thumb"><i class="fa-solid fa-candy-cane"></i></div>
+                    <div class="game-title">Sweet Bonanza</div>
+                    <div class="game-provider">Pragmatic</div>
+                    <a href="https://example.com/affiliate-mostbet" target="_blank" class="btn-play">Oyna</a>
+                </div>
+                <div class="game-card glass-panel">
+                    <div class="game-thumb"><i class="fa-solid fa-bolt-lightning"></i></div>
+                    <div class="game-title">Gates of Olympus</div>
+                    <div class="game-provider">Pragmatic</div>
+                    <a href="https://example.com/affiliate-parimatch" target="_blank" class="btn-play">Oyna</a>
+                </div>
+                <div class="game-card glass-panel">
+                    <div class="game-thumb"><i class="fa-solid fa-rocket"></i></div>
+                    <div class="game-title">JetX</div>
+                    <div class="game-provider">SmartSoft</div>
+                    <a href="https://example.com/affiliate-1xbet" target="_blank" class="btn-play">Oyna</a>
+                </div>
+                <div class="game-card glass-panel">
+                    <div class="game-thumb"><i class="fa-solid fa-circle-notch"></i></div>
+                    <div class="game-title">Roulette Live</div>
+                    <div class="game-provider">Evolution</div>
+                    <a href="https://example.com/affiliate-1xbet" target="_blank" class="btn-play">Oyna</a>
+                </div>
+                <div class="game-card glass-panel">
+                    <div class="game-thumb"><i class="fa-solid fa-coins"></i></div>
+                    <div class="game-title">Coin Strike</div>
+                    <div class="game-provider">Playson</div>
+                    <a href="https://example.com/affiliate-1xbet" target="_blank" class="btn-play">Oyna</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <h2 class="section-title" style="justify-content:center;">Tez-tez Verilən Suallar (FAQ)</h2>
+            <p class="section-desc" style="text-align:center;">Affiliate linkləri və bonuslar haqqında bilməli olduğunuz hər şey</p>
+
+            <div class="faq-wrapper">
+                <div class="faq-item glass-panel">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        <span>Bonusları necə əldə edə bilərəm?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        Səhifəmizdə bəyəndiyiniz platformanın yanındakı "BONUSU AL" düyməsinə klikləyin. Açılan rəsmi saytda qeydiyyatdan keçərkən göstərilən promo kodu daxil edin və ilk depozitinizi yerləşdirin.
+                    </div>
+                </div>
+                <div class="faq-item glass-panel">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        <span>Affiliate keçidləri vasitəsilə qeydiyyat təhlükəsizdirmi?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        Bəli, tamamilə təhlükəsizdir! Biz yalnız beynəlxalq lisenziyaya malik rəsmi və təhlükəsiz kazino brendləri ilə tərəfdaşlıq edirik.
+                    </div>
+                </div>
+                <div class="faq-item glass-panel">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        <span>Minimum depozit və çıxarış məbləği nə qədərdir?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        Əksər tərəfdaş saytlarda minimum depozit 2 AZN - 5 AZN təşkil edir. Pul çıxarışı isə m10, eManat, Visa/Mastercard və Kriptovalyuta vasitəsilə bir neçə dəqiqə ərzində həyata keçirilir.
+                    </div>
+                </div>
+                <div class="faq-item glass-panel">
+                    <button class="faq-btn" onclick="toggleFaq(this)">
+                        <span>Free Spins nə vaxt aktivləşir?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-content">
+                        Pulsuz fırlanmalar ilk depozitiniz təsdiqləndikdən dərhal sonra göstərilən slot oyunlarında aktivləşir.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+

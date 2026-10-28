@@ -1,0 +1,86 @@
+﻿@model WebApplication1.Models.Casino
+
+@{
+    ViewData["Title"] = $"{Model.Name} İncələnməsi və Bonusları - BonusLab";
+}
+
+<div class="container" style="padding: 40px 0;">
+    <!-- Geri qayıtma düyməsi -->
+    <div style="margin-bottom: 20px;">
+        <a href="/" style="color: var(--text-muted); font-size: 13px;"><i class="fa-solid fa-arrow-left"></i> Ana səhifəyə qayıt</a>
+    </div>
+
+    <!-- Kazino Başlıq Kartı -->
+    <div class="glass-panel" style="border-radius: 20px; padding: 30px; display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 30px; position: relative; overflow: hidden;">
+        <div style="display: flex; flex-direction: column; md-flex-direction: row; align-items: flex-start; md-align-items: center; justify-content: space-between; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 70px; height: 70px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-card); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; color: @Model.LogoColor;">
+                    @Model.LogoText
+                </div>
+                <div>
+                    <span style="font-size: 10px; background: rgba(0,255,102,0.1); color: var(--neon-green); padding: 3px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase;">Rəsmi Lisenziyalı</span>
+                    <h1 style="font-size: 26px; font-weight: 900; margin-top: 5px;">@Model.Name İncələnməsi</h1>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px; color: var(--gold); font-size: 14px;">
+                        <div><i class="fa-solid fa-star"></i> <span style="color:#fff; font-weight:bold;">@Model.Rating</span> / 5.0 Reytinq</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a href="/go/@Model.Slug" target="_blank" rel="nofollow noopener" style="background: linear-gradient(135deg, var(--gold), var(--neon-green)); color: var(--text-dark); padding: 14px 28px; border-radius: 12px; font-weight: 900; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 10px 20px rgba(0,255,102,0.2);">
+                    RƏSMİ SAYTA KEÇ <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Məzmun Grid -->
+    <div style="display: grid; grid-template-columns: 1fr; lg-grid-template-columns: 2fr 1fr; gap: 30px;">
+        
+        <!-- Sol tərəf: Əsas məlumatlar və bonus -->
+        <div>
+            <div class="glass-panel" style="border-radius: 16px; padding: 24px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 14px; color: var(--gold);"><i class="fa-solid fa-gift"></i> Eksklüziv Bonus Təklifi</h3>
+                <div style="background: rgba(8, 10, 15, 0.7); padding: 16px; border-radius: 12px; border: 1px solid var(--border-card); margin-bottom: 16px;">
+                    <div style="font-size: 12px; color: var(--text-muted);">@Model.BonusTitle</div>
+                    <div style="font-size: 22px; font-weight: 900; color: var(--neon-green); margin-top: 4px;">@Model.BonusValue</div>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(8, 10, 15, 0.7); padding: 12px 16px; border-radius: 12px; border: 1px dashed var(--border-card);">
+                    <div>
+                        <span style="font-size: 12px; color: var(--text-muted); display: block;">Promo Kod:</span>
+                        <span style="font-family: monospace; font-size: 16px; font-weight: 900; color: var(--gold);">@Model.PromoCode</span>
+                    </div>
+                    <button onclick="copyPromo('@Model.PromoCode')" style="background: rgba(255,215,0,0.2); color: var(--gold); padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">Kopyala</button>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="border-radius: 16px; padding: 24px;">
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 14px;"><i class="fa-solid fa-circle-info"></i> Platforma Haqqında</h3>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.7;">
+                    @Model.Name — Azərbaycandan olan oyunçular üçün ən populyar və etibarlı onlayn kazino və mərc platformalarından biridir. Geniş slot oyunları seçimi, canlı dilerlər, sürətli depozit və vəsaitin çıxarılması üsulları ilə seçilir. Eksklüziv bonusumuzdan yararlanmaq üçün yuxarıdakı düyməni istifadə edə bilərsiniz.
+                </p>
+            </div>
+        </div>
+
+        <!-- Sağ tərəf: Qısa xülasə -->
+        <div>
+            <div class="glass-panel" style="border-radius: 16px; padding: 24px;">
+                <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 16px; border-bottom: 1px solid var(--border-card); padding-bottom: 10px;">Xülasə Məlumat</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
+                    <li style="display: flex; justify-content: space-between;"><span style="color:var(--text-muted);">Kateqoriya:</span> <span style="font-weight:700; text-transform:uppercase;">@Model.Categories</span></li>
+                    <li style="display: flex; justify-content: space-between;"><span style="color:var(--text-muted);">Minimum Depozit:</span> <span style="font-weight:700;">10 AZN / 5 USD</span></li>
+                    <li style="display: flex; justify-content: space-between;"><span style="color:var(--text-muted);">Ödəniş sürəti:</span> <span style="font-weight:700; color:var(--neon-green);">Anında (5-15 dəq)</span></li>
+                    <li style="display: flex; justify-content: space-between;"><span style="color:var(--text-muted);">Dəstək:</span> <span style="font-weight:700;">24/7 Live Chat</span></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function copyPromo(code) {
+        navigator.clipboard.writeText(code);
+        alert(`Promokod kopyalandı: ${code}`);
+    }
+</script>

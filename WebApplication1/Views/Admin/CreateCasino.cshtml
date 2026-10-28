@@ -1,0 +1,51 @@
+﻿@model WebApplication1.Models.Casino
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <title>Yeni Kazino Əlavə Et</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container my-5" style="max-width: 600px;">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">➕ Yeni Kazino İnteqrasiyası</h4>
+            </div>
+            <div class="card-body">
+                <form action="/admin/casinos/create" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Kazino Adı</label>
+                        <input type="text" asp-for="Name" class="form-control" placeholder="Məs: Mostbet" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Slug (URL adı)</label>
+                        <input type="text" asp-for="Slug" class="form-control" placeholder="Məs: mostbet" required />
+                        <small class="text-muted">Saytdakı link belə olacaq: sizin-sayt.com/go/mostbet</small>
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Affiliate URL (Kazinodan aldığınız orijinal link)</label>
+                        <input type="url" asp-for="AffiliateUrl" class="form-control" placeholder="https://ref-partner.com/link?pid=123" required />
+                        <span asp-validation-for="AffiliateUrl" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/admin/casinos" class="btn btn-secondary">Geri</a>
+                        <button type="submit" class="btn btn-success">Yadda Saxla</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

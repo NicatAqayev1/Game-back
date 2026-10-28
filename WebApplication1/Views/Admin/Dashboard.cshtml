@@ -1,0 +1,195 @@
+﻿@{
+    Layout = null; // İstəsəniz öz layout-unuzu yaza bilərsiniz
+}
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <title>iGaming Affiliate Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <!-- Dashboard.cshtml daxilində başlıq hissəsinə: -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2> Affiliate İdarəetmə Paneli</h2>
+    <div class="d-flex gap-2">
+        <a href="/admin/export/clicks" class="btn btn-success">📥 Excel-ə İxrac Et (.CSV)</a>
+        <a href="/admin/casinos" class="btn btn-outline-primary">🎰 Kazinoları İdarə Et</a>
+        <a href="/admin/test-postback" class="btn btn-warning">🧪 Postback Test Et</a>
+        <a href="/admin/logout" class="btn btn-outline-danger">Çıxış Et</a>
+    </div>
+</div>
+    <div class="container my-5">
+        <h2 class="mb-4">🚀 Affiliate İdarəetmə Paneli</h2>
+
+        <!-- KPI Kartları (Ümumi göstəricilər) -->
+        <div class="row text-white mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary p-3 shadow-sm">
+                    <h5>Ümumi Klik</h5>
+                    <h3>@ViewBag.TotalClicks</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info p-3 shadow-sm">
+                    <h5>Qeydiyyat (Reg)</h5>
+                    <h3>@ViewBag.TotalRegs</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success p-3 shadow-sm">
+                    <h5>Depozit (FTD)</h5>
+                    <h3>@ViewBag.TotalFtds</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark p-3 shadow-sm">
+                    <h5>Ümumi Payout</h5>
+                    <h3>@ViewBag.TotalPayout AZN</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card shadow-sm p-3">
+            <h5 class="card-title mb-3">📈 Son 7 Günün Trafik və Depozit Dinamikası</h5>
+            <canvas id="performanceChart" style="max-height: 350px;"></canvas>
+        </div>
+    </div>
+</div>
+        <!-- Son Kliklər və Mənbələr Cədvəli -->
+        <div class="card shadow-sm mb-5">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">📊 Son Kliklər və Trafik Mənbələri (Sub1 / Sub2)</h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Vaxt</th>
+                            <th>Kazino</th>
+                            <th>Token (SubID)</th>
+                            <th>Mənbə (Sub1)</th>
+                            <th>Kampaniya (Sub2)</th>
+                            <th>Status</th>
+                            <th>Payout</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var click in ViewBag.RecentClicks)
+                        {
+                            <tr>
+                                <td>@click.ClickedAt.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                <td><strong>@click.Casino?.Name</strong></td>
+                                <td><code>@click.Token</code></td>
+                                <td><span class="badge bg-secondary">@(string.IsNullOrEmpty(click.Sub1) ? "-" : click.Sub1)</span></td>
+                                <td><span class="badge bg-light text-dark">@(string.IsNullOrEmpty(click.Sub2) ? "-" : click.Sub2)</span></td>
+                                <td>
+                                    @if (click.IsDeposited)
+                                    {
+                                        <span class="badge bg-success">FTD (Depozit)</span>
+                                    }
+                                    else if (click.IsRegistered)
+                                    {
+                                        <span class="badge bg-info">Reg</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Sadə Klik</span>
+                                    }
+                                </td>
+                                <td><strong>@click.Payout AZN</strong></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Postback Tarixçəsi və Audit Cədvəli -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">🛡️ Postback Audit Tarixçəsi (`PostbackLogs`)</h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Vaxt</th>
+                            <th>IP</th>
+                            <th>Gələn Növ</th>
+                            <th>Məbləğ</th>
+                            <th>Nəticə</th>
+                            <th>Sistem Cavabı</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pb in ViewBag.RecentPostbacks)
+                        {
+                            <tr class="@(pb.IsSuccessful ? "table-success" : "table-danger")">
+                                <td>@pb.ReceivedAt.ToString("HH:mm:ss")</td>
+                                <td>@pb.IpAddress</td>
+                                <td><b>@pb.Type?.ToUpper()</b></td>
+                                <td>@pb.Payout AZN</td>
+                                <td>@(pb.IsSuccessful ? "Uğurlu" : "Xətalı / Rədd")</td>
+                                <td><small>@pb.ResponseMessage</small></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <script>
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    
+    const labels = @Html.Raw(ViewBag.ChartLabels);
+    const clicks = @Html.Raw(ViewBag.ClicksData);
+    const ftds = @Html.Raw(ViewBag.FtdsData);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Ümumi Kliklər',
+                    data: clicks,
+                    borderColor: 'rgb(13, 110, 253)',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Depozitlər (FTD)',
+                    data: ftds,
+                    borderColor: 'rgb(25, 135, 84)',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

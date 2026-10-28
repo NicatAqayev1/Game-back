@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BonusLab AZ - Eksklüziv Kazino & İdman Məclisləri Bonusları</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <!-- Toast Notification -->
+    <div id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-text">Promokod kopyalandı!</span>
+    </div>
+  
+    <!-- HEADER / NAVIGATION -->
+    <header class="header glass-panel">
+        <div class="container header-nav">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-dice-five"></i></div>
+                <div>BONUS<span style="color:var(--gold);">LAB</span> <span class="logo-badge">AZ</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#top-offers"><i class="fa-solid fa-fire" style="color:var(--gold)"></i> Top Təkliflər</a>
+                <a href="#brands">Platformalar</a>
+                <a href="#games">Məşhur Oyunlar</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+
+            <div class="header-right">
+                <a href="#brands" class="btn-header">
+                    <i class="fa-solid fa-gift"></i> VIP Bonuslar
+                </a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+   
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fa-solid fa-dice-five"></i></div>
+                    <div>BONUS<span style="color:var(--gold);">LAB</span></div>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <span class="age-badge">18+</span>
+                    <div>
+                        <strong>Məsuliyyətli Oyun:</strong> Azyaşlıların qumar oyunlarında iştirakı qadağandır. Qumar asılılıq yarada bilər.
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:20px; text-align:center;">
+                © 2026 BonusLab AZ. Bütün hüquqlar qorunur.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOBİL ÜÇÜN SABİT (STICKY) CTA BAR -->
+    <div class="mobile-sticky-cta">
+        <div class="mobile-sticky-content">
+            <div class="mobile-sticky-text">
+                <span>Eksklüziv Təklif</span>
+                <strong>1000 AZN + 250 FS</strong>
+            </div>
+            <a href="https://example.com/affiliate-link-top" target="_blank" rel="noopener" class="btn-sticky-action">
+                BONUSU AL <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+   <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
