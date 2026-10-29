@@ -1,5 +1,3 @@
-C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\appsettings.Development.json
-C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\appsettings.json
 C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\WebApplication1.staticwebassets.runtime.json
 C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\WebApplication1.staticwebassets.endpoints.json
 C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\WebApplication1.exe
@@ -233,3 +231,6 @@ C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\runtimes\wi
 C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\runtimes\win-x86\native\msalruntime_x86.dll
 C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\runtimes\win\lib\net10.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\obj\Debug\net10.0\compressed\6ommz30ggj-{0}-7777ppzkzz-7777ppzkzz.gz
+C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\obj\Debug\net10.0\WebApplication1.sourcelink.json
+C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\appsettings.json
+C:\Users\FINTEX\Desktop\Fintex\gb2\WebApplication1\bin\Debug\net10.0\appsettings.Development.json

@@ -83,7 +83,12 @@
                         @foreach (var click in ViewBag.RecentClicks)
                         {
                             <tr>
-                                <td>@click.ClickedAt.ToString("HH:mm:ss")</td>
+                                <td>
+                                    <span class="local-time" data-utc="@click.ClickTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                        @click.ClickTime.ToString("dd.MM.yyyy HH:mm") (UTC)
+                                    </span>
+                                </td>
+                                @* <td>@click.ClickTime.ToString("HH:mm:ss")</td> *@
                                 <td>@click.Casino?.Name</td>
                                 <td><code style="user-select: all; cursor: pointer;" title="Kopyalamaq üçün klikləyin">@click.Token</code></td>
                                 <td>
@@ -107,7 +112,15 @@
             </div>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.local-time').forEach(function(el) {
+    let utcDate = el.getAttribute('data-utc');
+    let localDate = new Date(utcDate);
 
+    // Brauzerin yerli saat qurşağına uyğun formatda göstəririk
+    el.innerText = localDate.toLocaleString(); // Və ya istədiyiniz format
+});
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

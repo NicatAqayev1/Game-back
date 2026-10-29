@@ -1,73 +1,114 @@
 ﻿@model WebApplication1.Models.Casino
 @{
     ViewData["Title"] = "Yeni Kazino Əlavə Et";
+    Layout = null;
 }
 
-<div class="container" style="max-width: 600px; padding: 40px 0;">
-    <h2>Yeni Kazino Əlavə Et</h2>
-    <form asp-action="Create" method="post" style="background: rgba(17, 21, 34, 0.9); padding: 24px; border-radius: 12px; border: 1px solid #1e2638; margin-top: 20px;">
-        <div asp-validation-summary="All" style="color: #ff3366; font-size: 13px; margin-bottom: 15px;"></div>
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yeni Kazino Əlavə Et</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-dark text-light">
+    <div class="container" style="max-width: 650px; padding: 40px 0;">
+        <h2 class="text-white fw-bold mb-3">🎰 Yeni Kazino Əlavə Et</h2>
         
-        <div style="margin-bottom: 14px;">
-            <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Kazino Adı</label>
-            <input asp-for="Name" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" required />
-        </div>
-
-        <div style="margin-bottom: 14px;">
-            <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Slug (URL üçün, məsələn: 1xbet)</label>
-            <input asp-for="Slug" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" required />
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom: 14px;">
-            <div>
-                <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Loqo Qısaltması (məs: 1X)</label>
-                <input asp-for="LogoText" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
+        <form asp-action="Create" method="post" style="background: rgba(17, 21, 34, 0.95); padding: 24px; border-radius: 12px; border: 1px solid #1e2638; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            @Html.AntiForgeryToken()
+            
+            <!-- Validasiya Xətaları Ümumi Siyahısı -->
+            <div asp-validation-summary="All" class="text-danger mb-3" style="font-size: 13px;"></div>
+            
+            <!-- Kazino Adı -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Kazino Adı *</label>
+                <input asp-for="Name" class="form-control bg-black text-light border-secondary" placeholder="Məsələn: 1xBet Kazino" required />
+                <span asp-validation-for="Name" class="text-danger small"></span>
             </div>
-            <div>
-                <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Loqo Rəngi (məs: #a855f7)</label>
-                <input asp-for="LogoColor" type="color" style="border: 1px solid #1e2638;border-radius: 8px;width: 20%;" />
+
+            <!-- Slug -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Slug (URL kəsimi)</label>
+                <input asp-for="Slug" class="form-control bg-black text-light border-secondary" placeholder="Boş buraxarsanız adından avtomatik yaradılacaq (məs: 1xbet)" />
+                <span asp-validation-for="Slug" class="text-danger small"></span>
             </div>
-        </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom: 14px;">
-            <div>
-                <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Reytinq (məs: 4.9)</label>
-                <input asp-for="Rating" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
+            <!-- Loqo Qısaltması və Rəngi -->
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <label class="form-label text-secondary small">Loqo Qısaltması</label>
+                    <input asp-for="LogoText" class="form-control bg-black text-light border-secondary" placeholder="Məsələn: 1X" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-secondary small">Loqo Rəngi</label>
+                    <input asp-for="LogoColor" type="color" class="form-control form-control-color bg-black border-secondary w-100" style="height: 38px;" value="#a855f7" />
+                </div>
             </div>
-            <div>
-                <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Promo Kod</label>
-                <input asp-for="PromoCode" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
+
+            <!-- Reytinq və Promo Kod -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label text-secondary small">Reytinq (1.0 - 5.0)</label>
+                    <input asp-for="Rating" type="number" step="0.1" min="1.0" max="5.0" class="form-control bg-black text-light border-secondary" placeholder="4.9" />
+                    <span asp-validation-for="Rating" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-secondary small">Promo Kod</label>
+                    <input asp-for="PromoCode" class="form-control bg-black text-light border-secondary" placeholder="Məsələn: BONUS2026" />
+                </div>
             </div>
-        </div>
 
-        <div style="margin-bottom: 14px;">
-            <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Bonus Başlığı (məs: Xoş Gəldin Paketi)</label>
-            <input asp-for="BonusTitle" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
-        </div>
+            <!-- Bonus Başlığı -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Bonus Başlığı</label>
+                <input asp-for="BonusTitle" class="form-control bg-black text-light border-secondary" placeholder="Məsələn: Xoş Gəldin Paketi" />
+            </div>
 
-        <div style="margin-bottom: 14px;">
-            <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Bonus Dəyəri (məs: 1500 EUR + 150 FS)</label>
-            <input asp-for="BonusValue" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
-        </div>
+            <!-- Bonus Dəyəri -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Bonus Dəyəri</label>
+                <input asp-for="BonusValue" class="form-control bg-black text-light border-secondary" placeholder="Məsələn: 1500 EUR + 150 FS" />
+            </div>
 
-        <div style="margin-bottom: 14px;">
-            <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Affiliate Link (Real tərəfdaş linkiniz)</label>
-            <input asp-for="AffiliateUrl" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
-        </div>
+            <!-- Affiliate Link -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Affiliate Link *</label>
+                <input asp-for="AffiliateUrl" class="form-control bg-black text-light border-secondary" placeholder="https://partner-link.com/..." required />
+                <span asp-validation-for="AffiliateUrl" class="text-danger small"></span>
+            </div>
 
-        <div style="margin-bottom: 14px;">
-            <label style="font-size:13px; color:#9ca3af; display:block; margin-bottom:5px;">Kateqoriyalar (slots live sports instant)</label>
-            <input asp-for="Categories" style="width:100%; background:#080a0f; border:1px solid #1e2638; padding:10px; border-radius:8px; color:#fff;" />
-        </div>
+            <!-- Kateqoriyalar -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Kateqoriyalar</label>
+                <input asp-for="Categories" class="form-control bg-black text-light border-secondary" placeholder="slots, live, sports, instant" />
+            </div>
 
-        <div style="margin-bottom: 20px; display:flex; align-items:center; gap:10px;">
-            <input asp-for="IsFeatured" type="checkbox" style="width:18px; height:18px;" />
-            <label style="font-size:13px;">Ayın Təklifidirmi? (TOP)</label>
-        </div>
+            <!-- İP Whitelist (Sizin modeldə var) -->
+            <div class="mb-3">
+                <label class="form-label text-secondary small">Icazə verilən IP-lər (Allowed IPs - Postback üçün)</label>
+                <input asp-for="AllowedIPs" class="form-control bg-black text-light border-secondary" placeholder="Məsələn: 192.168.1.1, 10.0.0.5 (Boş olsa hamısına icazə var)" />
+            </div>
 
-        <button type="submit" style="width:100%; background:var(--gold); color:#0f172a; padding:12px; border-radius:8px; font-weight:900;">Yadda Saxla</button>
-    </form>
-    <div style="margin-top: 15px;">
-        <a asp-action="Index" style="color:#9ca3af; font-size:13px;">Geri qayıt</a>
+            <!-- IsFeatured (Ayın Təklifi) -->
+            <div class="mb-4 form-check">
+                <input asp-for="IsFeatured" class="form-check-input bg-black border-secondary" type="checkbox" id="isFeaturedCheck" />
+                <label class="form-check-label text-light" for="isFeaturedCheck">
+                    Ayın Təklifidirmi? (TOP Kazino kimi göstər)
+                </label>
+            </div>
+
+            <!-- Yadda Saxla Düyməsi -->
+            <button type="submit" class="btn w-100 fw-bold py-2" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; border: none;">
+                Kazino Əlavə Et
+            </button>
+        </form>
+        
+        <div class="mt-3">
+            <a asp-action="Index" class="text-secondary text-decoration-none small">← Geri qayıt</a>
+        </div>
     </div>
-</div>
+</body>
+</html>

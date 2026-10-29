@@ -81,7 +81,13 @@
                         @foreach (var click in ViewBag.RecentClicks)
                         {
                             <tr>
-                                <td>@click.ClickedAt.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                <td>
+                                    <!-- data-utc atributuna UTC vaxtını ötürürük -->
+                                    <span class="local-time" data-utc="@click.ClickTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                        @click.ClickTime.ToString("dd.MM.yyyy HH:mm") (UTC)
+                                    </span>
+                                </td>
+                                @* <td>@click.ClickTime.ToString("dd.MM.yyyy HH:mm:ss")</td> *@
                                 <td><strong>@click.Casino?.Name</strong></td>
                                 <td><code>@click.Token</code></td>
                                 <td><span class="badge bg-secondary">@(string.IsNullOrEmpty(click.Sub1) ? "-" : click.Sub1)</span></td>
@@ -129,7 +135,13 @@
                         @foreach (var pb in ViewBag.RecentPostbacks)
                         {
                             <tr class="@(pb.IsSuccessful ? "table-success" : "table-danger")">
-                                <td>@pb.ReceivedAt.ToString("HH:mm:ss")</td>
+                                <td>
+                                    <!-- data-utc atributuna UTC vaxtını ötürürük -->
+                                    <span class="local-time" data-utc="@pb.ReceivedAt.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                        @pb.ReceivedAt.ToString("dd.MM.yyyy HH:mm") (UTC)
+                                    </span>
+                                </td>
+                                @* <td>@pb.ReceivedAt.ToString("HH:mm:ss")</td> *@
                                 <td>@pb.IpAddress</td>
                                 <td><b>@pb.Type?.ToUpper()</b></td>
                                 <td>@pb.Payout AZN</td>
@@ -190,6 +202,13 @@
             }
         }
     });
+                document.querySelectorAll('.local-time').forEach(function(el) {
+                let utcDate = el.getAttribute('data-utc');
+                let localDate = new Date(utcDate);
+
+                // Brauzerin yerli saat qurşağına uyğun formatda göstəririk
+                el.innerText = localDate.toLocaleString(); // Və ya istədiyiniz format
+            });
 </script>
 </body>
 </html>

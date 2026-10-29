@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261028140520_FullAddedAllModels")]
-    partial class FullAddedAllModels
+    [Migration("20261029131050_İnitialCreation")]
+    partial class İnitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,9 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("AffiliateUrl")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AllowedIPs")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BonusTitle")
@@ -62,19 +65,20 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("PromoCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Rating")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Rating")
+                        .HasPrecision(3, 1)
+                        .HasColumnType("decimal(3,1)");
 
                     b.Property<string>("Slug")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -86,13 +90,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.ClickLog", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("CasinoId")
+                    b.Property<int?>("CasinoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ClickTime")
@@ -117,22 +121,18 @@ namespace WebApplication1.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Sub1")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Sub2")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Sub3")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("Token")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("UserAgent")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -149,11 +149,17 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.PostbackLog", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int?>("CasinoId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<long?>("ClickLogId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
@@ -165,26 +171,34 @@ namespace WebApplication1.Migrations
                     b.Property<decimal>("Payout")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("RawToken")
+                    b.Property<string>("PostbackType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ReceivedAt")
+                    b.Property<DateTime>("ProcessedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RequestUrl")
+                    b.Property<string>("RawData")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResponseMessage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClickLogId");
+
+                    b.HasIndex("CasinoId", "TransactionId")
+                        .IsUnique()
+                        .HasFilter("[TransactionId] IS NOT NULL");
+
+                    b.HasIndex("TransactionId", "CasinoId")
+                        .IsUnique()
+                        .HasFilter("[IsSuccessful] = 1 AND [TransactionId] IS NOT NULL");
 
                     b.ToTable("PostbackLogs");
                 });
@@ -192,12 +206,24 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Models.ClickLog", b =>
                 {
                     b.HasOne("WebApplication1.Models.Casino", "Casino")
-                        .WithMany()
-                        .HasForeignKey("CasinoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("ClickLogs")
+                        .HasForeignKey("CasinoId");
 
                     b.Navigation("Casino");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.PostbackLog", b =>
+                {
+                    b.HasOne("WebApplication1.Models.ClickLog", "ClickLog")
+                        .WithMany()
+                        .HasForeignKey("ClickLogId");
+
+                    b.Navigation("ClickLog");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Casino", b =>
+                {
+                    b.Navigation("ClickLogs");
                 });
 #pragma warning restore 612, 618
         }

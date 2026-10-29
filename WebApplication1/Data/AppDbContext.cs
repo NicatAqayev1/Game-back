@@ -16,6 +16,17 @@ namespace WebApplication1.Data
             modelBuilder.Entity<PostbackLog>()
                 .Property(p => p.Payout)
                 .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<PostbackLog>()
+                .HasIndex(p => new { p.CasinoId, p.TransactionId })
+                .IsUnique()
+                .HasFilter("[TransactionId] IS NOT NULL");
+            modelBuilder.Entity<PostbackLog>()
+                .HasIndex(p => new { p.TransactionId, p.CasinoId })
+                .IsUnique()
+                .HasFilter("[IsSuccessful] = 1 AND [TransactionId] IS NOT NULL");
+            modelBuilder.Entity<PostbackLog>()
+                .Property(p => p.RawData)
+                .HasColumnType("nvarchar(max)");
         }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options){}
 

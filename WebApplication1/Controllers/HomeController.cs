@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WebApplication1.Data;
 using WebApplication1.Models;
@@ -28,10 +29,14 @@ namespace WebApplication1.Controllers
             _logger = logger;
             _configuration = configuration;
         }
+
         public class GeoApiResponse
         {
-            public string status { get; set; }
-            public string countryCode { get; set; }
+            [JsonPropertyName("status")]
+            public string status { get; set; } = string.Empty;
+
+            [JsonPropertyName("countryCode")]
+            public string countryCode { get; set; } = string.Empty;
         }
         // Ana Səhifə - Bazadakı bütün aktiv kazinoları oxuyur
         public async Task<IActionResult> Index()
@@ -120,7 +125,7 @@ namespace WebApplication1.Controllers
             {
                 // Xarici API çökərsə və ya timeout olarsa, sistem çökmyəcək!
                 // Sadəcə xətanı loglayırıq və countryCode = "XX" olaraq davam edirik.
-                _logger.LogWarning(ex, "Geo-IP xidmətinə qoşulmaq mümkün olmadı. IP: {IpAddress}. Fallback ölkə tətbiq edildi.", ipAddress);
+                _logger.LogWarning(ex, $"Geo-IP xidmətinə qoşulmaq mümkün olmadı. IP: {ipAddress}. Fallback ölkə tətbiq edildi.", ipAddress);
             }
             // 4. Klik qeydini yaradırıq
             var clickLog = new ClickLog
@@ -154,115 +159,5 @@ namespace WebApplication1.Controllers
 
             return Redirect(targetUrl);
         }
-
-        // 2. Postback Endpoint (Reg və FTD dəstəyi ilə)
-        // URL nümunəsi (Reg): /api/postback?clickId=5&type=reg
-        // URL nümunəsi (FTD): /api/postback?clickId=5&type=ftd&payout=100.00
-        [HttpGet("api/postback")]
-        public async Task<IActionResult> Postback([FromQuery] Guid token, [FromQuery] string type, [FromQuery] decimal payout, [FromQuery] string secret = "")
-        {
-            string clientIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            string fullUrl = HttpContext.Request.Path + HttpContext.Request.QueryString;
-
-            bool isSuccess = false;
-            string message = "";
-            string validSecret = _configuration["PostbackSecret"];
-
-            // 1. Secret Key yoxlaması
-            if (string.IsNullOrEmpty(validSecret) || secret != validSecret)
-            {
-                message = "İcazəsiz giriş! Keçərsiz Secret Key.";
-                await LogPostback(fullUrl, clientIp, token.ToString(), type, payout, false, message);
-                return Unauthorized(new { success = false, message });
-            }
-
-            // 2. Token yoxlaması
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var clickLog = await _context.ClickLogs.FirstOrDefaultAsync(c => c.Token == token);
-                if (clickLog == null)
-                {
-                    message = "Token tapılmadı və ya etibarsızdır!";
-                    await LogPostback(fullUrl, clientIp, token.ToString(), type, payout, false, message);
-                    return NotFound(new { success = false, message });
-                }
-
-                TimeSpan attributionWindow = TimeSpan.FromDays(30); // Standart iGaming pəncərəsi
-                if (DateTime.Now - clickLog.ClickTime > attributionWindow)
-                {
-                    message = $"Atributsiya pəncərəsi bitib! Klik tarixi: {clickLog.ClickTime}, Limit 30 gündür.";
-                    await LogPostback(fullUrl, clientIp, token.ToString(), type, payout, false, message);
-                    return BadRequest(new { success = false, message });
-                }
-                // 3. Type yoxlaması
-                if (string.IsNullOrEmpty(type))
-                {
-                    message = "Konversiya növü (type) göstərilməlidir!";
-                    await LogPostback(fullUrl, clientIp, token.ToString(), type, payout, false, message);
-                    return BadRequest(new { success = false, message });
-                }
-
-                string actionType = type?.ToLower() ?? "reg";
-
-                if (actionType == "reg")
-                {
-                    clickLog.IsRegistered = true;
-                }
-                else if (actionType == "ftd")
-                {
-                    clickLog.IsRegistered = true; // FTD edən şəxs onsuz da qeydiyyatdan keçib
-                    clickLog.IsDeposited = true;
-                    clickLog.Payout += payout;
-                }
-                else
-                {
-                    message = "Yanlış növ! 'reg' və ya 'ftd' yazın.";
-                    await LogPostback(fullUrl, clientIp, token.ToString(), type, payout, false, message);
-                    return BadRequest(new { success = false, message });
-                }
-                _context.PostbackLogs.Add(new PostbackLog
-                {
-                    ReceivedAt = DateTime.Now,
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-                    Type = actionType,
-                    Payout = payout,
-                    IsSuccessful = true,
-                    ResponseMessage = "Processed successfully via transaction"
-                });
-                await _context.SaveChangesAsync();
-                isSuccess = true;
-                message = $"Uğurla yeniləndi! Növ: {actionType.ToUpper()}, Payout: {clickLog.Payout}";
-
-                // Uğurlu sorğunu loglayırıq
-                await LogPostback(fullUrl, clientIp, token.ToString(), type, payout, true, message);
-
-                return Ok(new { success = true, message });
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync(); // Xəta olarsa heç nəyi dəyişmirik
-                return StatusCode(500, new { status = "error", message = ex.Message });
-            }
-        }
-        // Köməkçi loglama metodu
-        private async Task LogPostback(string url, string ip, string token, string type, decimal payout, bool success, string responseMsg)
-    {
-        var postbackLog = new PostbackLog
-        {
-            ReceivedAt = DateTime.Now,
-            RequestUrl = url,
-            IpAddress = ip,
-            RawToken = token,
-            Type = type ?? "unknown",
-            Payout = payout,
-            IsSuccessful = success,
-            ResponseMessage = responseMsg
-        };
-
-        _context.PostbackLogs.Add(postbackLog);
-        await _context.SaveChangesAsync();
     }
-        
-    }
-}
+ }

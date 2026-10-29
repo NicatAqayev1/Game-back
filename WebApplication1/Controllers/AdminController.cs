@@ -24,17 +24,13 @@ namespace WebApplication1.Controllers
             _context = context;
             _configuration = configuration;
         }
-        public class GeoApiResponse
-        {
-            public string status { get; set; }
-            public string countryCode { get; set; }
-        }
-        #region Login,Logout
+
+    #region Login,Logout
         [AllowAnonymous]
         [HttpGet("admin/login")]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index");
             }
@@ -68,7 +64,10 @@ namespace WebApplication1.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
-        #endregion
+     #endregion
+
+
+
         // Admin Analitika Paneli: /admin/dashboard
         [Route("admin/dashboard")]
         public async Task<IActionResult> Dashboard()
@@ -113,7 +112,7 @@ namespace WebApplication1.Controllers
             ViewBag.FtdsData = Newtonsoft.Json.JsonConvert.SerializeObject(ftdsData);
 
             ViewBag.RecentClicks = await _context.ClickLogs.Include(c => c.Casino).OrderByDescending(c => c.ClickTime).Take(20).ToListAsync();
-            ViewBag.RecentPostbacks = await _context.PostbackLogs.OrderByDescending(p => p.ReceivedAt).Take(20).ToListAsync();
+            ViewBag.RecentPostbacks = await _context.PostbackLogs.OrderByDescending(p => p.ProcessedTime).Take(20).ToListAsync();
 
             return View();
         }
@@ -128,14 +127,14 @@ namespace WebApplication1.Controllers
                 {
                     var casinos = await _context.Casinos.ToListAsync();
 
-                    // Hər kazino üzrə klik sayı
-                    var clickCounts = await _context.ClickLogs
-                        .GroupBy(c => c.CasinoId)
-                        .Select(g => new { CasinoId = g.Key, Count = g.Count() })
-                        .ToDictionaryAsync(x => x.CasinoId, x => x.Count);
+            // Hər kazino üzrə klik sayı
+            var clickCounts = await _context.ClickLogs
+                .GroupBy(c => c.CasinoId)
+                .Select(g => new { CasinoId = g.Key ?? 0, Count = g.Count() })
+                .ToDictionaryAsync(x => x.CasinoId, x => x.Count);
 
-                    // Ümumi statistika göstəriciləri
-                    ViewBag.TotalCasinos = casinos.Count;
+            // Ümumi statistika göstəriciləri
+            ViewBag.TotalCasinos = casinos.Count;
                     ViewBag.TotalClicks = await _context.ClickLogs.CountAsync();
                     ViewBag.TodayClicks = await _context.ClickLogs
                         .Where(c => c.ClickTime >= DateTime.Today)
@@ -325,7 +324,7 @@ namespace WebApplication1.Controllers
 
 
 
-#region Kazino CRUD Əməliyyatları
+    #region Kazino CRUD Əməliyyatları
         // 1. Kazinoların Siyahısı: /admin/casinos
         [Route("admin/casinos")]
         public async Task<IActionResult> Casinos()
@@ -411,7 +410,7 @@ namespace WebApplication1.Controllers
             return RedirectToAction(nameof(Casinos));
 }
 
-        #endregion
+    #endregion
 
 
         #region Additional Functions
@@ -482,21 +481,30 @@ namespace WebApplication1.Controllers
             // Məntiqi tətbiq edirik
             if (normalizedType == "reg")
             {
-                clickLog.IsRegistered = true;
+                if (!clickLog.IsDeposited)
+                {
+                    clickLog.IsRegistered = true;
+                    clickLog.Payout = payout;
+                }
             }
-            else if (normalizedType == "ftd" || normalizedType == "deposit")
+            else if (normalizedType == "ftd")
             {
                 clickLog.IsRegistered = true;
                 clickLog.IsDeposited = true;
-                clickLog.Payout += payout;
+                clickLog.Payout = payout;
+            }
+            else if (normalizedType == "ftd_cancel")
+            {
+                clickLog.IsDeposited = false; 
+                clickLog.Payout = 0.0m;       
             }
 
             // Audit üçün PostbackLog əlavə edirik
             var postbackLog = new PostbackLog
             {
-                ReceivedAt = DateTime.Now,
+                ProcessedTime = DateTime.UtcNow,
                 IpAddress = "127.0.0.1 (Admin Test)",
-                Type = normalizedType,
+                PostbackType = normalizedType,
                 Payout = payout,
                 IsSuccessful = true,
                 ResponseMessage = "Admin panelindən test simulyasiyası uğurla icra olundu."

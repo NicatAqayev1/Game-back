@@ -1,1 +1,94 @@
-[]
+[
+  {
+    "ContainingType": "PostbackController",
+    "Method": "HandleGetPostback",
+    "RelativePath": "api/postback/{casinoSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "casinoSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "token",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "type",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "payout",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "txId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "PostbackController",
+    "Method": "HandlePostpostback",
+    "RelativePath": "api/postback/{casinoSlug}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "casinoSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "qToken",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "qType",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "qPayout",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fPayout",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "qTxId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fToken",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fType",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "fTxId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

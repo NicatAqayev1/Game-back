@@ -31,9 +31,9 @@ namespace WebApplication1.Services
 
             string cacheKey = $"geo_{ipAddress}";
             // Əgər bu IP daha əvvəl yoxlanılıbsa, keşdən oxuyuruq (API-ni yormamaq üçün)
-            if (_cache.TryGetValue(cacheKey, out string cachedCountry))
+            if (_cache.TryGetValue(cacheKey, out string? cachedCountry))
             {
-                return cachedCountry;
+                return cachedCountry ?? "Unknown";
             }
 
             try
